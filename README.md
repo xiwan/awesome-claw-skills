@@ -11,6 +11,7 @@
 | 技能 | 描述 |
 |------|------|
 | [skill-security-audit](./skill-security-audit/) | 审计 skill 的安全风险。扫描凭据泄露、危险命令、网络外传、文件越界等问题 |
+| [zip-compress](./zip-compress/) | 压缩文件和目录为 ZIP 归档。支持排除 .git、node_modules 等模式 |
 
 ## 安装
 
@@ -44,6 +45,7 @@ A collection of useful skills for [Clawdbot](https://github.com/clawdbot/clawdbo
 | Skill | Description |
 |-------|-------------|
 | [skill-security-audit](./skill-security-audit/) | Audit skill security risks. Scans for credential leaks, dangerous commands, data exfiltration, and file boundary violations |
+| [zip-compress](./zip-compress/) | Compress files and directories into ZIP archives. Supports excluding patterns like .git, node_modules |
 
 ## Installation
 
