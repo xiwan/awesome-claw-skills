@@ -15,11 +15,11 @@
 ## 安装
 
 ```bash
-# 使用 ClawdHub CLI
-clawdhub install <skill-name>
+# 克隆仓库
+git clone https://github.com/xiwan/awesome-claw-skills.git
 
-# 或手动复制到 skills 目录
-cp -r <skill-folder> ~/clawd/skills/
+# 复制需要的 skill 到你的 skills 目录
+cp -r awesome-claw-skills/<skill-name> ~/clawd/skills/
 ```
 
 ## 贡献
@@ -48,11 +48,11 @@ A collection of useful skills for [Clawdbot](https://github.com/clawdbot/clawdbo
 ## Installation
 
 ```bash
-# Using ClawdHub CLI
-clawdhub install <skill-name>
+# Clone the repository
+git clone https://github.com/xiwan/awesome-claw-skills.git
 
-# Or manually copy to your skills directory
-cp -r <skill-folder> ~/clawd/skills/
+# Copy the skill you need to your skills directory
+cp -r awesome-claw-skills/<skill-name> ~/clawd/skills/
 ```
 
 ## Contributing
