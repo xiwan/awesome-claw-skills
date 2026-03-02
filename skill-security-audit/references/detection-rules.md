@@ -18,6 +18,30 @@
 | Stripe | `sk_live_[0-9a-zA-Z]{24,}` | sk_live_... |
 | Telegram Bot | `[0-9]{9,10}:[a-zA-Z0-9_-]{35}` | 123456789:ABC... |
 
+### JWT Token
+
+```regex
+eyJ[A-Za-z0-9_-]{100,}
+```
+
+长度超过 100 字符的 JWT token 通常是真实凭据，而非示例。
+
+### 硬编码 Cookie/Session
+
+```regex
+(a1|web_session|id_token|session_id|csrf_token)['"]\s*[:=]\s*['"][a-zA-Z0-9+/=_-]{20,}
+```
+
+常见于中国平台（小红书、知乎等）的 cookie 硬编码。
+
+### 数据库连接串
+
+```regex
+(mongodb|mysql|postgres|redis)://[^:]+:[^@]+@[^/]+
+```
+
+包含用户名:密码的数据库连接串（排除 localhost 示例）。
+
 ### 密码模式
 
 ```regex

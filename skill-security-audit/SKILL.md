@@ -51,9 +51,15 @@ bash skills/skill-security-audit/scripts/audit.sh skills/ --json
 
 | 类别 | 严重程度 | 检测内容 |
 |------|----------|----------|
-| 凭据泄露 | 🔴 CRITICAL | OpenAI/Anthropic/AWS/GitHub 等 API key |
-| 危险命令 | 🟠 HIGH | `rm -rf`、`sudo`、`eval()`、`curl \| bash` |
+| 凭据泄露 | 🔴 CRITICAL | OpenAI/Anthropic/AWS/GitHub/Google/Slack API key |
+| JWT Token | 🔴 CRITICAL | 长 JWT token（100+字符，可能是真实凭据） |
+| 数据库凭据 | 🔴 CRITICAL | MongoDB/MySQL/Postgres/Redis 连接串含密码 |
+| 私钥 | 🔴 CRITICAL | RSA/DSA/EC/PGP 私钥 |
+| 硬编码 Cookie | 🟠 HIGH | `a1`/`web_session`/`id_token` 等 cookie 值 |
+| 硬编码密码 | 🟠 HIGH | `password`/`secret`/`api_key` 硬编码值 |
+| 危险命令 | 🟠 HIGH | `rm -rf`、`eval()`、`curl \| bash` |
 | 敏感目录 | 🟠 HIGH | `~/.ssh`、`~/.aws`、`/etc/passwd` |
+| sudo | 🟡 MEDIUM | `sudo` 命令（权限提升） |
 | 网络请求 | 🟡 MEDIUM | HTTP 到非白名单域名 |
 | 权限问题 | 🟡 MEDIUM | `chmod 777` |
 | 依赖风险 | 🟢 LOW | 未锁定版本的依赖 |

@@ -267,12 +267,34 @@ scan_credentials() {
         add_finding "CRITICAL" "Credential" "$file" "$line_num" "Private key detected"
     done || true
     
+    # JWT Tokens (long base64, 100+ chars, likely real tokens)
+    grep -nE 'eyJ[A-Za-z0-9_-]{100,}' "$file" 2>/dev/null | while IFS=: read -r line_num content; do
+        should_skip_finding "$file" "$line_num" "$skill_path" && continue
+        add_finding "CRITICAL" "Credential" "$file" "$line_num" "JWT token detected (100+ chars)"
+    done || true
+    
+    # Hardcoded cookies (common patterns like a1=, web_session=, id_token=)
+    grep -nE '(a1|web_session|id_token|session_id|csrf_token)['"'"'"]\s*[:=]\s*['"'"'"][a-zA-Z0-9+/=_-]{20,}' "$file" 2>/dev/null | while IFS=: read -r line_num content; do
+        should_skip_finding "$file" "$line_num" "$skill_path" && continue
+        # Skip if it looks like loading from env/config
+        [[ "$content" =~ (env|config|getenv|process\.|os\.environ|load_) ]] && continue
+        add_finding "HIGH" "Credential" "$file" "$line_num" "Hardcoded cookie/session token"
+    done || true
+    
+    # Database connection strings with credentials
+    grep -nE '(mongodb|mysql|postgres|redis)://[^:]+:[^@]+@[^/]+' "$file" 2>/dev/null | while IFS=: read -r line_num content; do
+        should_skip_finding "$file" "$line_num" "$skill_path" && continue
+        # Skip localhost examples
+        [[ "$content" =~ (localhost|127\.0\.0\.1|example) ]] && continue
+        add_finding "CRITICAL" "Credential" "$file" "$line_num" "Database connection string with credentials"
+    done || true
+    
     # Generic password/secret patterns (only in non-config files)
     if [[ "$file" != *.json && "$file" != *.yaml && "$file" != *.yml ]]; then
         grep -niE '(password|passwd|secret|api_key|apikey|auth_token)\s*[=:]\s*['"'"'"][^'"'"'"]{8,}['"'"'"]' "$file" 2>/dev/null | while IFS=: read -r line_num content; do
             should_skip_finding "$file" "$line_num" "$skill_path" && continue
             # Skip if it looks like a placeholder
-            if [[ "$content" =~ (your[-_]|xxx|example|placeholder|\<|\{) ]]; then
+            if [[ "$content" =~ (your[-_]|xxx|example|placeholder|\<|\{|env|getenv|process\.) ]]; then
                 continue
             fi
             add_finding "HIGH" "Credential" "$file" "$line_num" "Possible hardcoded credential"
