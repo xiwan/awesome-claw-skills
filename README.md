@@ -2,6 +2,8 @@
 
 为 [Clawdbot](https://github.com/clawdbot/clawdbot) Agent 打造的实用技能合集。
 
+> 💡 **声明**：这些 skill 都是我个人觉得好用的，但不代表对所有人都适用。欢迎 fork 后根据自己的需求修改！
+
 ## ⚠️ 安全建议
 
 **在使用任何 skill 之前，建议先用 `skill-security-audit` 扫描生成安全报告。** 这能帮你发现潜在的凭据泄露、危险命令、网络外传等风险。
@@ -36,6 +38,8 @@ cp -r awesome-claw-skills/<skill-name> ~/clawd/skills/
 # English
 
 A collection of useful skills for [Clawdbot](https://github.com/clawdbot/clawdbot) agents.
+
+> 💡 **Disclaimer**: These skills are what I personally find useful, but they may not suit everyone. Feel free to fork and modify them to fit your own needs!
 
 ## ⚠️ Security Recommendation
 
