@@ -12,6 +12,7 @@
 
 | 技能 | 描述 |
 |------|------|
+| [host-monitor](./host-monitor/) | 监控宿主机 CPU、内存、磁盘使用率，资源紧张时主动告警。适合 heartbeat 定期检查 |
 | [pptx-translator](./pptx-translator/) | 翻译 PPT 文件。支持 Amazon Translate（传统机器翻译）和 Bedrock LLM（大语言模型翻译） |
 | [skill-security-audit](./skill-security-audit/) | 审计 skill 的安全风险。扫描凭据泄露、危险命令、网络外传、文件越界等问题 |
 | [zip-compress](./zip-compress/) | 压缩文件和目录为 ZIP 归档。支持排除 .git、node_modules 等模式 |
@@ -49,6 +50,7 @@ A collection of useful skills for [Clawdbot](https://github.com/clawdbot/clawdbo
 
 | Skill | Description |
 |-------|-------------|
+| [host-monitor](./host-monitor/) | Monitor host CPU, memory, and disk usage. Alerts when resources are strained. Great for heartbeat checks |
 | [pptx-translator](./pptx-translator/) | Translate PPT files. Supports Amazon Translate (traditional MT) and Bedrock LLM (context-aware translation) |
 | [skill-security-audit](./skill-security-audit/) | Audit skill security risks. Scans for credential leaks, dangerous commands, data exfiltration, and file boundary violations |
 | [zip-compress](./zip-compress/) | Compress files and directories into ZIP archives. Supports excluding patterns like .git, node_modules |
