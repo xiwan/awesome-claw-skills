@@ -1,13 +1,21 @@
 ---
 name: aidlc
-description: "AI Development Lifecycle — standardized workflow for AI agents developing on codebases. On first use, agent analyzes the project and generates OPERATIONS.md at project root. Covers 7 phases: orientation, design, scratch validation, implementation, testing, documentation, and commit."
+description: "AI Development Lifecycle — standardized, version-driven workflow for AI agents developing on codebases. On first use, agent analyzes the project and generates OPERATIONS.md at project root. Each development task begins with a version declaration, tracked through 7 phases: orientation, design, scratch validation, implementation, testing, documentation, and commit. Progress is recorded in a dedicated version log directory."
 ---
 
 # AIDLC — AI Development Lifecycle
 
-A standardized development workflow for AI agents working on codebases.
+A standardized, version-driven development workflow for AI agents working on codebases.
 
-> Version: 1.2.0
+> Version: 2.0.0
+
+## Core Philosophy
+
+**版本驱动开发 (Version-Driven Development)**
+
+Every development task starts with a version declaration — a version number and a one-line description of what this version delivers. This declaration becomes the anchor for the entire workflow: progress is tracked against it, phases are recorded under it, and the task is not complete until the version is committed.
+
+The version log serves as a living history of the project's evolution, readable by both humans and agents.
 
 ## First Run
 
@@ -15,11 +23,12 @@ When this skill is activated for the first time on a project:
 
 1. Detect whether this is an **existing project** or a **new (empty) project**
 2. Follow the appropriate path below
-3. Generate `OPERATIONS.md` at the project root using the template (both Part 1 and Part 2)
-4. Add `OPERATIONS.md` to `.gitignore` (it is local to each developer/agent)
-5. On subsequent tasks, read `OPERATIONS.md` and follow the 7 phases
+3. Generate `OPERATIONS.md` at the project root using the template (all 3 parts)
+4. Create the `version_log_dir` directory (default: `versions/`)
+5. Add `OPERATIONS.md` and `version_log_dir` to `.gitignore`
+6. On subsequent tasks, read `OPERATIONS.md` and follow the 7 phases
 
-> `OPERATIONS.md` is project-specific and **must not be committed**. Each developer/agent maintains their own copy.
+> `OPERATIONS.md` and `versions/` are local to each developer/agent. They must not be committed.
 
 ### Path A: Existing Project
 
@@ -36,7 +45,8 @@ When the project root is empty (or only has a README / LICENSE):
    - Test directory + one placeholder test
    - `.gitignore` (language-appropriate)
    - `scratch_dir` (gitignored)
-3. Fill `OPERATIONS.md` with the scaffolded paths — leave `version_sync` and `docs` minimal, expand as the project grows
+   - `versions/` directory (gitignored)
+3. Fill `OPERATIONS.md` with the scaffolded paths
 4. Commit the scaffold as `v0.1.0: initial scaffold`
 
 > After scaffold, all 7 phases apply normally. The first real task starts at Phase 1.
@@ -55,18 +65,73 @@ When analyzing a project, the agent MUST investigate:
 - **Scratch directory**: existing or conventional location for throwaway code (must be gitignored)
 - **Sensitive patterns**: project-specific secrets beyond the defaults (API keys, tokens, credentials)
 
+## Version Log System
+
+Each development task produces a version log file in the `version_log_dir` (default: `versions/`).
+
+### Directory Structure
+
+```
+versions/
+├── v1.2.0.md        # completed
+├── v1.2.1.md        # completed
+└── v1.3.0.md        # in progress (current)
+```
+
+### Version Log File Format
+
+Created at Phase 1 (Design), updated as each phase completes:
+
+```markdown
+# v<VERSION> — <one-line description>
+
+- Started: <timestamp>
+- Completed: <timestamp or ->
+- Status: 🔄 In Progress | ✅ Committed | ❌ Abandoned
+
+## Plan
+
+- Files to modify: <list>
+- Risk: <protected files hit? Y/N>
+
+## Progress
+
+- [x] Phase 0: Orientation
+- [x] Phase 1: Design — <timestamp>
+- [x] Phase 2: Scratch — <timestamp>
+- [ ] Phase 3: Implement
+- [ ] Phase 4: Test
+- [ ] Phase 5: Docs
+- [ ] Phase 6: Pre-commit
+- [ ] Phase 7: Commit
+
+## Notes
+
+<anything noteworthy during development — blockers, decisions, deviations>
+```
+
+### Rules
+
+- One file per version, named `v<VERSION>.md`
+- Agent creates the file at Phase 1 and updates it at each phase transition
+- When Phase 7 completes, status changes to `✅ Committed`, fill in `Completed` timestamp
+- If a task is abandoned (human says stop, or approach is unviable), status changes to `❌ Abandoned` with a reason in Notes; any uncommitted changes should be reverted or stashed
+- `OPERATIONS.md` always reflects the current version being worked on
+- **Single-version lock**: only one version may be `in-progress` at a time. To start a new version, the current one must be committed or abandoned first
+
 ## OPERATIONS.md Template
 
-The generated file has two parts:
-- **Part 1: Project Profile** — static analysis results (architecture, read order, protected files)
-- **Part 2: Development Phases** — actionable workflow with project-specific commands
+The generated file has three parts:
+- **Part 1: Project Profile** — static analysis results
+- **Part 2: Current Version** — the active version declaration and progress
+- **Part 3: Development Phases** — actionable workflow with project-specific commands
 
-Agent MUST generate both parts. A profile without phases is just documentation; phases without a profile lack context.
+Agent MUST generate all three parts.
 
 ````markdown
 # OPERATIONS — Project Development Guide
 
-Generated by AIDLC v1.2.0. Local to this workspace, do not commit.
+Generated by AIDLC v2.0.0. Local to this workspace, do not commit.
 
 ---
 
@@ -84,6 +149,7 @@ scratch_dir: ""               # e.g. test/scratch/ (must be gitignored)
 build_cmd: ""                 # e.g. docker compose build, make, npm run build (leave empty if none)
 docs: []                      # files to update per release
 version_sync: []              # ALL files that embed the version (changelog, skill, manifest...)
+version_log_dir: "versions/"  # directory for version progress files (gitignored)
 commit_convention: ""         # e.g. conventional, semver-prefix, free-form
 ```
 
@@ -136,7 +202,22 @@ secret=
 
 ---
 
-## Part 2: Development Phases
+## Part 2: Current Version
+
+> This section is updated by the agent at each phase transition.
+> When no task is active, it shows "No active version."
+
+```yaml
+version: ""           # e.g. 1.3.0
+description: ""       # one-line: what this version delivers
+status: "idle"        # idle | in-progress | pre-commit | committed → idle
+current_phase: ""     # e.g. Phase 3: Implement
+log_file: ""          # e.g. versions/v1.3.0.md
+```
+
+---
+
+## Part 3: Development Phases
 
 ### Phase 0: Orientation
 
@@ -146,16 +227,25 @@ Read the project. Understand before you change.
 2. Read files listed in **Must Read**
 3. Check `version_file` — confirm current version
 4. Browse `test_dir` — understand existing coverage
+5. Check `version_log_dir` — review recent version history for context
 
 **Rule: 先读后写，不懂不动。**
 
-### Phase 1: Design
+### Phase 1: Design — Version Declaration
 
-1. One-line description of the feature/fix
-2. List files to modify
-3. Check against **Protected Files** → if hit, **STOP, ask human**
-4. Determine new version number
+> **This is where every task begins.** No code without a version.
+
+1. **Declare version**: ask human (or determine from context) the target version number
+   - patch (x.y.Z): bug fix, config change, docs-only
+   - minor (x.Y.0): new feature, non-breaking change
+   - major (X.0.0): breaking change, architectural shift
+   - when in doubt, ask human
+2. **Declare description**: one-line summary of what this version delivers
+3. List files to modify
+4. Check against **Protected Files** → if hit, **STOP, ask human**
 5. Present plan to human
+6. **Create version log**: write `<version_log_dir>/v<VERSION>.md` with plan and initial progress
+7. **Update Part 2** of `OPERATIONS.md` with the new version info, status `in-progress`
 
 ### Phase 2: Scratch Validation
 
@@ -171,6 +261,10 @@ mkdir -p <scratch_dir>
 
 Goals: prove feasibility, discover integration issues, fail fast.
 
+> **Skip condition**: trivial changes (one-line fix, docs-only, config tweak) may skip this phase. Note "Phase 2: skipped (trivial)" in version log.
+
+✏️ Update version log: check off Phase 2, add timestamp.
+
 ### Phase 3: Implement
 
 Minimal code to make it work.
@@ -179,6 +273,8 @@ Minimal code to make it work.
 - No drive-by refactors
 - No test modifications unless human requests
 - Keep validating with scratch scripts
+
+✏️ Update version log: check off Phase 3, add timestamp.
 
 ### Phase 4: Formal Test
 
@@ -196,6 +292,8 @@ Promote scratch tests to real tests.
    ```
 5. New code failures → fix. Pre-existing flaky → document, don't block.
 
+✏️ Update version log: check off Phase 4, record test results in Notes.
+
 ### Phase 5: Documentation
 
 1. Update files in `docs` list
@@ -203,7 +301,11 @@ Promote scratch tests to real tests.
 3. Sync version to all `version_sync` files
 4. No secrets in any committed file
 
+✏️ Update version log: check off Phase 5.
+
 ### Phase 6: Pre-commit Checklist
+
+Update `OPERATIONS.md` Part 2 status to `pre-commit`.
 
 All must pass before commit:
 
@@ -235,13 +337,21 @@ Checklist:
 - [ ] No secrets in diff
 - [ ] No unintended changes
 
+✏️ Update version log: check off Phase 6.
+
 ### Phase 7: Commit & Push
 
 ```bash
 git add -A
-git commit -m "<message per commit_convention>"
+git commit -m "v<VERSION>: <description per commit_convention>"
 git push
 ```
+
+After successful push:
+1. Update version log: check off Phase 7, set status to `✅ Committed`, fill in `Completed` timestamp
+2. Update `OPERATIONS.md` Part 2: reset all fields to empty, status back to `idle`
+
+✏️ The version is now closed. Next task starts fresh from Phase 0.
 ````
 
 > **Key rule**: In Phase 6, the agent MUST substitute `<test_runner>`, `<build_cmd>`, `<version_file>`, `<version_sync>`, and `<sensitive_patterns>` with actual values from the Project Info section. The pre-commit checklist must be copy-paste executable — no placeholders left.
@@ -258,16 +368,27 @@ Read the project. Understand before you change.
 2. Read files listed in **Must Read**
 3. Check `version_file` — confirm current version
 4. Browse `test_dir` — understand existing coverage
+5. Check `version_log_dir` — review recent version history for context
+
+> **Hot start**: if the previous version was just committed in this session, steps 1–4 can be skimmed rather than fully re-read.
 
 **Rule: 先读后写，不懂不动。**
 
-### Phase 1: Design
+### Phase 1: Design — Version Declaration
 
-1. One-line description of the feature/fix
-2. List files to modify
-3. Check against **Protected Files** → if hit, **STOP, ask human**
-4. Determine new version number
+> **This is where every task begins.** No code without a version.
+
+1. **Declare version**: ask human (or determine from context) the target version number
+   - patch (x.y.Z): bug fix, config change, docs-only
+   - minor (x.Y.0): new feature, non-breaking change
+   - major (X.0.0): breaking change, architectural shift
+   - when in doubt, ask human
+2. **Declare description**: one-line summary of what this version delivers
+3. List files to modify
+4. Check against **Protected Files** → if hit, **STOP, ask human**
 5. Present plan to human
+6. **Create version log**: write `<version_log_dir>/v<VERSION>.md`
+7. **Update Part 2** of `OPERATIONS.md`: version, description, status `in-progress`, current_phase, log_file
 
 ### Phase 2: Scratch Validation
 
@@ -283,6 +404,10 @@ mkdir -p <scratch_dir>
 
 Goals: prove feasibility, discover integration issues, fail fast.
 
+> **Skip condition**: trivial changes (one-line fix, docs-only, config tweak) may skip this phase. Note "Phase 2: skipped (trivial)" in version log.
+
+✏️ Update version log and `OPERATIONS.md` Part 2 current_phase.
+
 ### Phase 3: Implement
 
 Minimal code to make it work.
@@ -291,6 +416,8 @@ Minimal code to make it work.
 - No drive-by refactors
 - No test modifications unless human requests
 - Keep validating with scratch scripts
+
+✏️ Update version log and `OPERATIONS.md` Part 2 current_phase.
 
 ### Phase 4: Formal Test
 
@@ -308,12 +435,16 @@ Promote scratch tests to real tests.
    ```
 5. New code failures → fix. Pre-existing flaky → document, don't block.
 
+✏️ Update version log and `OPERATIONS.md` Part 2 current_phase.
+
 ### Phase 5: Documentation
 
 1. Update files in `docs` list
 2. Update `version_file`
 3. Sync version to all `version_sync` files
 4. No secrets in any committed file
+
+✏️ Update version log and `OPERATIONS.md` Part 2 current_phase.
 
 ### Phase 6: Pre-commit Checklist
 
@@ -343,23 +474,43 @@ git diff --cached | grep -iE '<sensitive_patterns>' && echo "❌ SECRETS" || ech
 - [ ] No secrets in diff
 - [ ] `git diff` — no unintended changes
 
+✏️ Update version log, set `OPERATIONS.md` Part 2 status to `pre-commit`.
+
 ### Phase 7: Commit & Push
 
 ```bash
 git add -A
-git commit -m "<message per commit_convention>"
+git commit -m "v<VERSION>: <description per commit_convention>"
 git push
 ```
+
+After successful push:
+1. Version log: status → `✅ Committed`, fill in `Completed` timestamp
+2. `OPERATIONS.md` Part 2: reset all fields to empty, status back to `idle`
+
+✏️ Version closed. Next task starts fresh from Phase 0.
 
 ## Quick Reference
 
 ```
-Phase 0  Orientation     Read OPERATIONS.md, understand context
-Phase 1  Design          Plan, identify risks, get human approval
-Phase 2  Scratch         Validate MVP in scratch_dir (not committed)
-Phase 3  Implement       Minimal code, no side effects
-Phase 4  Formal Test     Promote to real tests, full regression
-Phase 5  Documentation   Update docs, bump version, sync version
-Phase 6  Pre-commit      Tests + build + version sync + secrets scan
-Phase 7  Commit & Push   Ship it
+Phase 0  Orientation        Read OPERATIONS.md, understand context, review version history
+Phase 1  Design & Declare   Declare version + description, plan, create version log
+Phase 2  Scratch            Validate MVP in scratch_dir (not committed)
+Phase 3  Implement          Minimal code, no side effects
+Phase 4  Formal Test        Promote to real tests, full regression
+Phase 5  Documentation      Update docs, bump version, sync version
+Phase 6  Pre-commit         Tests + build + version sync + secrets scan
+Phase 7  Commit & Push      Ship it, close version log
+```
+
+## Version Log Lifecycle
+
+```
+Phase 1 ──→ CREATE version log (status: 🔄 In Progress)
+            ↓
+Phase 2-6 → UPDATE progress checkboxes + timestamps
+            ↓
+Phase 7 ──→ CLOSE version log (status: ✅ Committed)
+            ↓
+         ──→ RESET OPERATIONS.md Part 2 to idle
 ```
