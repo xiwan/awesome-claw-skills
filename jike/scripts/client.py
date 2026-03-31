@@ -3,89 +3,106 @@
 Jike API Client (standalone)
 Run directly: python3 scripts/client.py feed --access-token T --refresh-token T
 No pip install required — only needs `requests`.
+
+Author: Claude Opus 4.5
 """
 
 import argparse
 import json
+import mimetypes
 import os
 import sys
 from pathlib import Path
-from typing import Optional
+from typing import Optional, List
 
 import requests
 
 API_BASE = "https://api.ruguoapp.com"
-REQUEST_TIMEOUT = 15
+UPTOKEN_URL = "https://upload.jike.ruguoapp.com/token"
+QINIU_UPLOAD_URL = "https://up.qbox.me/"
+REQUEST_TIMEOUT_SEC = 15
 HEADERS = {
     "Origin": "https://web.okjike.com",
     "User-Agent": (
-        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:148.0) "
-        "Gecko/20100101 Firefox/148.0"
+        "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5 like Mac OS X) "
+        "AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 "
+        "Mobile/15E148 Safari/604.1"
     ),
-    "Accept": "application/json",
-    "Content-Type": "application/json",
+    "Accept": "application/json, text/plain, */*",
+    "DNT": "1",
 }
-
-SECRETS_FILE = Path(os.getenv("JIKE_SECRETS_FILE", Path.home() / "clawd" / "secrets" / "jike.json"))
-
-
-def load_tokens_from_file() -> tuple[str, str] | None:
-    """Load tokens from secrets file if exists."""
-    if SECRETS_FILE.exists():
-        with open(SECRETS_FILE) as f:
-            data = json.load(f)
-            return data.get("access_token"), data.get("refresh_token")
-    return None, None
-
-
-def save_tokens_to_file(access_token: str, refresh_token: str):
-    """Save tokens to secrets file."""
-    SECRETS_FILE.parent.mkdir(parents=True, exist_ok=True)
-    with open(SECRETS_FILE, "w") as f:
-        json.dump({"access_token": access_token, "refresh_token": refresh_token}, f, indent=2)
-    print(f"[*] Tokens saved to {SECRETS_FILE}", file=sys.stderr)
-
-
-def refresh_tokens(refresh_token: str, access_token: str) -> tuple[str, str]:
-    """Refresh tokens using refresh_token."""
-    resp = requests.post(
-        f"{API_BASE}/app_auth_tokens.refresh",
-        headers={**HEADERS, "x-jike-refresh-token": refresh_token},
-        json={},
-        timeout=REQUEST_TIMEOUT,
-    )
-    resp.raise_for_status()
-    new_access = resp.headers.get("x-jike-access-token", access_token)
-    new_refresh = resp.headers.get("x-jike-refresh-token", refresh_token)
-    return new_access, new_refresh
 
 
 def _call(method: str, path: str, access_token: str, refresh_token: str, retry: bool = True, **kwargs):
-    """Make API call with auto-refresh on 401."""
-    hdrs = {**HEADERS, "x-jike-access-token": access_token}
+    hdrs = {**HEADERS, "Content-Type": "application/json", "x-jike-access-token": access_token}
     resp = requests.request(
         method,
         f"{API_BASE}{path}",
         headers=hdrs,
-        timeout=REQUEST_TIMEOUT,
+        timeout=REQUEST_TIMEOUT_SEC,
         **kwargs,
     )
 
     if resp.status_code == 401 and retry:
-        print("[*] Token expired, refreshing...", file=sys.stderr)
-        try:
-            new_access, new_refresh = refresh_tokens(refresh_token, access_token)
-            save_tokens_to_file(new_access, new_refresh)
-            return _call(method, path, new_access, new_refresh, retry=False, **kwargs)
-        except Exception as e:
-            print(f"[!] Refresh failed: {e}", file=sys.stderr)
-            raise
+        new_access, new_refresh = _refresh(refresh_token, access_token)
+        return _call(method, path, new_access, new_refresh, retry=False, **kwargs)
 
     resp.raise_for_status()
     return resp.json() if resp.content else {}
 
 
+def _refresh(refresh_token: str, access_token: str = "") -> tuple:
+    resp = requests.post(
+        f"{API_BASE}/app_auth_tokens.refresh",
+        headers={**HEADERS, "Content-Type": "application/json", "x-jike-refresh-token": refresh_token},
+        json={},
+        timeout=REQUEST_TIMEOUT_SEC,
+    )
+    resp.raise_for_status()
+    return (
+        resp.headers.get("x-jike-access-token", access_token),
+        resp.headers.get("x-jike-refresh-token", refresh_token),
+    )
+
+
 # ── API Functions ─────────────────────────────────────────
+
+def get_uptoken() -> str:
+    """获取七牛云上传 token"""
+    resp = requests.get(UPTOKEN_URL, params={"bucket": "jike"}, timeout=REQUEST_TIMEOUT_SEC)
+    resp.raise_for_status()
+    return resp.json()["uptoken"]
+
+
+def upload_picture(file_path: str) -> str:
+    """上传单张图片到七牛云，返回 picture key"""
+    path = Path(file_path)
+    if not path.exists():
+        raise FileNotFoundError(f"File not found: {file_path}")
+    
+    mime_type, _ = mimetypes.guess_type(str(path))
+    if not mime_type or not mime_type.startswith("image"):
+        raise ValueError(f"Not an image file: {file_path}")
+    
+    uptoken = get_uptoken()
+    with open(path, "rb") as f:
+        files = {
+            "token": (None, uptoken),
+            "file": (path.name, f, mime_type),
+        }
+        resp = requests.post(QINIU_UPLOAD_URL, files=files, timeout=30)
+    
+    resp.raise_for_status()
+    result = resp.json()
+    if result.get("success"):
+        return result["key"]
+    raise RuntimeError(f"Upload failed: {result}")
+
+
+def upload_pictures(file_paths: List[str]) -> List[str]:
+    """上传多张图片，返回 picture keys 列表"""
+    return [upload_picture(p) for p in file_paths]
+
 
 def feed(at: str, rt: str, limit: int = 20, load_more_key: Optional[str] = None) -> dict:
     body: dict = {"limit": limit}
@@ -94,8 +111,11 @@ def feed(at: str, rt: str, limit: int = 20, load_more_key: Optional[str] = None)
     return _call("POST", "/1.0/personalUpdate/followingUpdates", at, rt, json=body)
 
 
-def create_post(at: str, rt: str, content: str, picture_keys: Optional[list] = None) -> dict:
-    return _call("POST", "/1.0/originalPosts/create", at, rt, json={"content": content, "pictureKeys": picture_keys or []})
+def create_post(at: str, rt: str, content: str, picture_keys: Optional[list] = None, topic_id: Optional[str] = None) -> dict:
+    body = {"content": content, "pictureKeys": picture_keys or []}
+    if topic_id:
+        body["submitToTopic"] = topic_id
+    return _call("POST", "/1.0/originalPosts/create", at, rt, json=body)
 
 
 def delete_post(at: str, rt: str, post_id: str) -> dict:
@@ -139,19 +159,25 @@ def notifications(at: str, rt: str) -> dict:
 
 def main():
     p = argparse.ArgumentParser(description="Jike API client")
-    
-    # Try to load from file first, then env vars
-    file_access, file_refresh = load_tokens_from_file()
-    access_env = os.getenv("JIKE_ACCESS_TOKEN") or file_access
-    refresh_env = os.getenv("JIKE_REFRESH_TOKEN") or file_refresh
-    
-    p.add_argument("--access-token", default=access_env, help="Access token")
-    p.add_argument("--refresh-token", default=refresh_env, help="Refresh token")
-    
+    access_env = os.getenv("JIKE_ACCESS_TOKEN") or None  # coerce "" -> None
+    refresh_env = os.getenv("JIKE_REFRESH_TOKEN") or None  # coerce "" -> None
+    p.add_argument(
+        "--access-token",
+        default=access_env,
+        required=access_env is None,
+        help="Access token (or set JIKE_ACCESS_TOKEN)",
+    )
+    p.add_argument(
+        "--refresh-token",
+        default=refresh_env,
+        required=refresh_env is None,
+        help="Refresh token (or set JIKE_REFRESH_TOKEN)",
+    )
     sub = p.add_subparsers(dest="cmd", required=True)
 
     sub.add_parser("feed").add_argument("--limit", type=int, default=20)
-    sp = sub.add_parser("post"); sp.add_argument("--content", required=True)
+    sp = sub.add_parser("post"); sp.add_argument("--content", required=True); sp.add_argument("--topic-id", default=None); sp.add_argument("--pictures", nargs="*", default=[], help="Image file paths to upload")
+    sp = sub.add_parser("upload"); sp.add_argument("--files", nargs="+", required=True, help="Image file paths to upload")
     sub.add_parser("delete-post").add_argument("--post-id", required=True)
     sp = sub.add_parser("comment"); sp.add_argument("--post-id", required=True); sp.add_argument("--content", required=True); sp.add_argument("--target-type", default="ORIGINAL_POST", choices=["ORIGINAL_POST", "REPOST"])
     sp = sub.add_parser("delete-comment"); sp.add_argument("--comment-id", required=True); sp.add_argument("--target-type", default="ORIGINAL_POST", choices=["ORIGINAL_POST", "REPOST"])
@@ -161,16 +187,12 @@ def main():
     sub.add_parser("notifications")
 
     args = p.parse_args()
-    
-    if not args.access_token or not args.refresh_token:
-        print("Error: No tokens found. Run auth.py first or set JIKE_ACCESS_TOKEN/JIKE_REFRESH_TOKEN", file=sys.stderr)
-        sys.exit(1)
-    
     at, rt = args.access_token, args.refresh_token
 
     dispatch = {
         "feed": lambda: feed(at, rt, args.limit),
-        "post": lambda: create_post(at, rt, args.content),
+        "post": lambda: create_post(at, rt, args.content, picture_keys=upload_pictures(args.pictures) if args.pictures else None, topic_id=args.topic_id),
+        "upload": lambda: {"keys": upload_pictures(args.files)},
         "delete-post": lambda: delete_post(at, rt, args.post_id),
         "comment": lambda: add_comment(at, rt, args.post_id, args.content, args.target_type),
         "delete-comment": lambda: delete_comment(at, rt, args.comment_id, args.target_type),

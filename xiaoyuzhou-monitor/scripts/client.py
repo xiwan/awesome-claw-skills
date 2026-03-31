@@ -26,10 +26,10 @@ HEADERS = {
     "Content-Type": "application/json",
 }
 
-SECRETS_FILE = Path(os.getenv("XIAOYUZHOU_SECRETS_FILE", Path.home() / "clawd" / "secrets" / "xiaoyuzhou.json"))
+SECRETS_FILE = Path.home() / "clawd" / "secrets" / "xiaoyuzhou.json"
 
 
-def load_config():
+def load_tokens():
     """加载凭据"""
     if not SECRETS_FILE.exists():
         print(f"❌ 凭据文件不存在: {SECRETS_FILE}", file=sys.stderr)
@@ -38,9 +38,8 @@ def load_config():
         return json.load(f)
 
 
-def save_config(config):
+def save_tokens(config):
     """保存凭据（token 刷新后）"""
-    SECRETS_FILE.parent.mkdir(parents=True, exist_ok=True)
     with open(SECRETS_FILE, "w") as f:
         json.dump(config, f, indent=2, ensure_ascii=False)
     print("🔄 Token 已刷新并保存", file=sys.stderr)
@@ -88,7 +87,7 @@ def call_api(method: str, base_url: str, path: str, config: dict, retry: bool = 
             new_access, new_refresh = refresh_tokens(config["refreshToken"], config["accessToken"])
             config["accessToken"] = new_access
             config["refreshToken"] = new_refresh
-            save_config(config)
+            save_tokens(config)
             return call_api(method, base_url, path, config, retry=False, **kwargs)
         except Exception as e:
             print(f"❌ 刷新失败: {e}", file=sys.stderr)
@@ -151,7 +150,7 @@ def main():
     sub.add_parser("refresh", help="手动刷新 token")
     
     args = parser.parse_args()
-    config = load_config()
+    config = load_tokens()
     
     try:
         if args.cmd == "episodes":
@@ -166,7 +165,7 @@ def main():
             new_access, new_refresh = refresh_tokens(config["refreshToken"], config["accessToken"])
             config["accessToken"] = new_access
             config["refreshToken"] = new_refresh
-            save_config(config)
+            save_tokens(config)
             result = {"success": True, "message": "Token 刷新成功"}
         else:
             result = {"error": "Unknown command"}
