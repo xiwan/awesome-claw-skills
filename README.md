@@ -17,6 +17,8 @@
 | [skill-security-audit](./skill-security-audit/) | 审计 skill 的安全风险。扫描凭据泄露、危险命令、网络外传、文件越界等问题 |
 | [zip-compress](./zip-compress/) | 压缩文件和目录为 ZIP 归档。支持排除 .git、node_modules 等模式 |
 | [aidlc](./aidlc/) | AI Development Lifecycle — AI agent 标准化开发流程。涵盖代码阅读、设计、验证、实现、测试、文档、提交 7 个阶段 |
+| [jike](./jike/) | 即刻社交网络客户端 — QR 扫码登录、刷 Feed、发帖评论搜索、Token 自动刷新 |
+| [xiaoyuzhou-monitor](./xiaoyuzhou-monitor/) | 小宇宙播客数据监控 — 播放量、订阅者、评论，Token 自动刷新 |
 
 ## 关于 AIDLC 与 awslabs/aidlc-workflows
 
@@ -70,6 +72,8 @@ A collection of useful skills for [Clawdbot](https://github.com/clawdbot/clawdbo
 | [skill-security-audit](./skill-security-audit/) | Audit skill security risks. Scans for credential leaks, dangerous commands, data exfiltration, and file boundary violations |
 | [zip-compress](./zip-compress/) | Compress files and directories into ZIP archives. Supports excluding patterns like .git, node_modules |
 | [aidlc](./aidlc/) | AI Development Lifecycle — standardized dev workflow for AI agents. Covers orientation, design, scratch validation, implementation, testing, docs, and commit |
+| [jike](./jike/) | Jike social network client — QR login, feed reading, posting, commenting, searching, auto token refresh |
+| [xiaoyuzhou-monitor](./xiaoyuzhou-monitor/) | Xiaoyuzhou podcast monitoring — play counts, subscribers, comments, auto token refresh |
 
 ## About AIDLC vs awslabs/aidlc-workflows
 
