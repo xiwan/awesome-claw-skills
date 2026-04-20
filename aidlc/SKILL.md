@@ -7,7 +7,7 @@ description: "AI Development Lifecycle — standardized, version-driven workflow
 
 A standardized, version-driven development workflow for AI agents working on codebases.
 
-> Version: 2.0.0
+> Version: 2.1.0
 
 ## Core Philosophy
 
@@ -17,6 +17,44 @@ Every development task starts with a version declaration — a version number an
 
 The version log serves as a living history of the project's evolution, readable by both humans and agents.
 
+## Cross-Session Memory
+
+AI agent conversations are ephemeral — context resets on every new session. AIDLC solves this with two mechanisms:
+
+### Design Notes (`design/todo.md`)
+
+A gitignored file that persists **discussion conclusions, design decisions, deferred ideas, and next steps** across sessions. This is the agent's long-term memory for the project.
+
+- Agent **reads** this file in Phase 0 (Orientation) — every new session starts by catching up
+- Agent **writes** to this file when preserving context (see below) or when a discussion produces decisions worth remembering
+- Format: date-stamped sections with tagged items (✅ decided, ⬜ todo, ❌ rejected)
+
+```markdown
+## YYYY-MM-DD <topic>
+
+- ✅ Decided to keep X because Y
+- ⬜ Refactor Z into shared module
+- ❌ Rejected approach A — tested, doesn't work because B
+```
+
+### Context Preservation (保护现场)
+
+When the human says **"保护现场"**, **"save context"**, **"先存一下"**, or similar — the agent immediately:
+
+1. **Save code changes**: `git stash` or `git add -A && git commit -m "WIP: <current task>"` — whichever is appropriate
+2. **Save discussion context**: append to `design/todo.md` with:
+   - Conclusions reached in this session
+   - Decisions made and their reasoning
+   - Unfinished work and next steps
+   - Open questions
+3. **Confirm**: report what was saved (stash/commit hash + todo.md summary)
+
+This ensures nothing is lost when a session ends unexpectedly, the human switches tasks, or context window fills up.
+
+### Setup
+
+On first run, AIDLC adds `design/` to `.gitignore` alongside `OPERATIONS.md` and `versions/`. These are local working files, not committed to the repository.
+
 ## First Run
 
 When this skill is activated for the first time on a project:
@@ -25,8 +63,9 @@ When this skill is activated for the first time on a project:
 2. Follow the appropriate path below
 3. Generate `OPERATIONS.md` at the project root using the template (all 3 parts)
 4. Create the `version_log_dir` directory (default: `versions/`)
-5. Add `OPERATIONS.md` and `version_log_dir` to `.gitignore`
-6. On subsequent tasks, read `OPERATIONS.md` and follow the 7 phases
+5. Create `design/` directory with an empty `todo.md`
+6. Add `OPERATIONS.md`, `version_log_dir`, and `design/` to `.gitignore`
+7. On subsequent tasks, read `OPERATIONS.md` and follow the 7 phases
 
 > `OPERATIONS.md` and `versions/` are local to each developer/agent. They must not be committed.
 
@@ -228,6 +267,7 @@ Read the project. Understand before you change.
 3. Check `version_file` — confirm current version
 4. Browse `test_dir` — understand existing coverage
 5. Check `version_log_dir` — review recent version history for context
+6. Read `design/todo.md` — catch up on pending tasks, decisions, and deferred ideas from previous sessions
 
 **Rule: 先读后写，不懂不动。**
 
@@ -369,6 +409,7 @@ Read the project. Understand before you change.
 3. Check `version_file` — confirm current version
 4. Browse `test_dir` — understand existing coverage
 5. Check `version_log_dir` — review recent version history for context
+6. Read `design/todo.md` — catch up on pending tasks, decisions, and deferred ideas from previous sessions
 
 > **Hot start**: if the previous version was just committed in this session, steps 1–4 can be skimmed rather than fully re-read.
 
