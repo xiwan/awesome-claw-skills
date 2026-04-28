@@ -7,7 +7,7 @@ description: "AI Development Lifecycle — standardized, version-driven workflow
 
 A standardized, version-driven development workflow for AI agents working on codebases.
 
-> Version: 2.4.0
+> Version: 2.5.0
 
 ## Core Philosophy
 
@@ -222,8 +222,23 @@ If Grill is skipped, follow steps 1–7 normally:
 3. List files to modify
 4. Check against **Protected Files** → if hit, **STOP, ask human**
 5. Present plan to human
-6. **Create version log**: write `<version_log_dir>/v<VERSION>.md` → format in [references/version-log.md](references/version-log.md)
-7. **Update Part 2** of `OPERATIONS.md`: version, description, status `in-progress`, current_phase, log_file
+6. **Declare track**: determine **full** or **fast** track (see below)
+7. **Create version log**: write `<version_log_dir>/v<VERSION>.md` → format in [references/version-log.md](references/version-log.md)
+8. **Update Part 2** of `OPERATIONS.md`: version, description, status `in-progress`, current_phase, log_file
+
+#### Fast Track
+
+For lightweight changes, skip Phases 2/4/5 and go straight from implementation to pre-commit.
+
+**Fast track conditions** (ALL must be true):
+- Patch version (x.y.Z)
+- ≤ 3 files changed
+- No Protected Files touched
+- Docs-only, config-only, or covered by existing tests
+
+**Fast track flow**: Phase 0 → 1 → 3 → 6 → 7
+
+Record `track: fast` in the version log. The version log only lists the phases actually executed.
 
 ### Phase 2: Scratch Validation
 
