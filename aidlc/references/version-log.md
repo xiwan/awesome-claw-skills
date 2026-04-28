@@ -2,6 +2,8 @@
 
 Each development task produces a version log file in the `version_log_dir` (default: `versions/`).
 
+By default `versions/` is gitignored. Set `version_log_committed: true` in OPERATIONS.md Part 1 to commit version logs to the repository (recommended for teams and open source projects).
+
 ## Directory Structure
 
 ```
@@ -26,12 +28,13 @@ Created at Phase 1 (Design), updated as each phase completes:
 
 - Files to modify: <list>
 - Risk: <protected files hit? Y/N>
+- Phase 2 skip: <yes — reason | no>
 
 ## Progress
 
-- [x] Phase 0: Orientation
+- [x] Phase 0: Orientation — <timestamp>
 - [x] Phase 1: Design — <timestamp>
-- [x] Phase 2: Scratch — <timestamp>
+- [ ] Phase 2: Scratch — <timestamp or "skipped: <reason>">
 - [ ] Phase 3: Implement
 - [ ] Phase 4: Test
 - [ ] Phase 5: Docs
@@ -48,9 +51,10 @@ Created at Phase 1 (Design), updated as each phase completes:
 - One file per version, named `v<VERSION>.md`
 - Agent creates the file at Phase 1 and updates it at each phase transition
 - When Phase 7 completes, status changes to `✅ Committed`, fill in `Completed` timestamp
-- If a task is abandoned (human says stop, or approach is unviable), status changes to `❌ Abandoned` with a reason in Notes; any uncommitted changes should be reverted or stashed
+- If a task is abandoned, status changes to `❌ Abandoned` with reason in Notes; uncommitted changes should be reverted or stashed
 - `OPERATIONS.md` always reflects the current version being worked on
-- **Single-version lock**: only one version may be `in-progress` at a time. To start a new version, the current one must be committed or abandoned first
+- **Single-version lock**: only one version may be `in-progress` at a time. Multiple agents must coordinate on the same version — no parallel versions on the same branch
+- Phase 2 skip must be recorded explicitly in the version log with the rule that applies
 
 ## Version Log Lifecycle
 
@@ -62,4 +66,6 @@ Phase 2-6 → UPDATE progress checkboxes + timestamps
 Phase 7 ──→ CLOSE version log (status: ✅ Committed)
             ↓
          ──→ RESET OPERATIONS.md Part 2 to idle
+            ↓
+         ──→ if version_log_committed: git add versions/vX.Y.Z.md && commit --amend
 ```
