@@ -7,7 +7,7 @@ description: "AI Development Lifecycle — standardized, version-driven workflow
 
 A standardized, version-driven development workflow for AI agents working on codebases.
 
-> Version: 2.3.0
+> Version: 2.3.1
 
 ## Core Philosophy
 
@@ -163,29 +163,29 @@ Read the project. Understand before you change.
 
 ### Phase 1: Design — Version Declaration
 
+> **This is where every task begins.** No code without a version.
+
 #### [Optional] Requirement Grill
 
-When the requirement is ambiguous or the user hasn't specified a version number, run a quick requirements interview before declaring the version. Skip this if the task is already clear.
+Before declaring a version, check whether the requirement needs clarification.
 
-**Trigger**: user says "grill me", "clarify task", or the requirement feels vague.
-**Skip condition**: requirement is clear and version bump is obvious — proceed directly to step 1 below.
+**Trigger** (any one):
+- User explicitly says "grill me", "clarify task", or similar
+- User message is < 20 characters and mentions no specific file or function
+- User message contains hedging words (e.g. "大概", "可能", "maybe", "not sure", "看看")
 
-If triggered, ask these questions **one at a time**, give a recommended answer for each:
+**Skip**: requirement mentions specific files/functions AND the version bump is obvious.
 
-1. What problem does this task solve? (one sentence)
-2. Patch / minor / major? (recommend based on the answer)
-3. Which files need to change? (list specific paths)
-4. Do any files hit Protected Files? → if yes, STOP and ask human
-5. What's the success criterion? (must be concrete and verifiable)
-6. What are the edge cases or risks?
-7. What is explicitly out of scope?
+If triggered, ask these 3 questions **one at a time**, give a recommended answer for each:
 
-After all answers, output a draft Phase 1 declaration and ask: "Ready to proceed?"
-Once confirmed, continue with the standard Phase 1 steps below.
+1. **Scope**: What exactly changes, and what doesn't? (list files + explicit exclusions)
+2. **Success criterion**: How do we know this is done? (must be concrete and verifiable)
+3. **Risks**: What could go wrong or what edge cases exist?
 
----
+After answers, output a **complete Phase 1 declaration** (version number, description, file list, Protected Files check, plan) and ask: "Ready to proceed?"
+Once confirmed, **skip to step 6 below** (create version log).
 
-> **This is where every task begins.** No code without a version.
+If Grill is skipped, follow steps 1–7 normally:
 
 1. **Declare version**: ask human (or determine from context) the target version number
    - patch (x.y.Z): bug fix, config change, docs-only
