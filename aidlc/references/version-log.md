@@ -23,21 +23,29 @@ Created at Phase 1 (Design), updated as each phase completes:
 - Started: <timestamp>
 - Completed: <timestamp or ->
 - Status: 🔄 In Progress | ✅ Committed | ❌ Abandoned
+- Track: full | fast
 
 ## Plan
 
 - Files to modify: <list>
 - Risk: <protected files hit? Y/N>
-- Phase 2 skip: <yes — reason | no>
 
 ## Progress
 
+### Full track (default)
 - [x] Phase 0: Orientation — <timestamp>
 - [x] Phase 1: Design — <timestamp>
 - [ ] Phase 2: Scratch — <timestamp or "skipped: <reason>">
 - [ ] Phase 3: Implement
 - [ ] Phase 4: Test
 - [ ] Phase 5: Docs
+- [ ] Phase 6: Pre-commit
+- [ ] Phase 7: Commit
+
+### Fast track (patch, ≤3 files, no protected, existing test coverage)
+- [x] Phase 0: Orientation — <timestamp>
+- [x] Phase 1: Design — <timestamp>
+- [ ] Phase 3: Implement
 - [ ] Phase 6: Pre-commit
 - [ ] Phase 7: Commit
 
@@ -54,7 +62,6 @@ Created at Phase 1 (Design), updated as each phase completes:
 - If a task is abandoned, status changes to `❌ Abandoned` with reason in Notes; uncommitted changes should be reverted or stashed
 - `OPERATIONS.md` always reflects the current version being worked on
 - **Single-version lock**: only one version may be `in-progress` at a time. Multiple agents must coordinate on the same version — no parallel versions on the same branch
-- Phase 2 skip must be recorded explicitly in the version log with the rule that applies
 
 ## Version Log Lifecycle
 
