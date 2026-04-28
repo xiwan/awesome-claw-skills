@@ -7,7 +7,7 @@ description: "AI Development Lifecycle — standardized, version-driven workflow
 
 A standardized, version-driven development workflow for AI agents working on codebases.
 
-> Version: 2.3.1
+> Version: 2.4.0
 
 ## Core Philosophy
 
@@ -146,6 +146,7 @@ Read the project. Understand before you change.
 4. Browse `test_dir` — understand existing coverage
 5. Check `version_log_dir` — review recent version history for context
 6. Read `design/todo.md` — catch up on pending tasks and decisions from previous sessions
+7. **Drift detection** — compare `OPERATIONS.md` against actual project state (see below)
 
 **Mandatory output before proceeding to Phase 1:**
 
@@ -158,6 +159,31 @@ Read the project. Understand before you change.
 ```
 
 > Agent MUST output this summary. Cannot proceed to Phase 1 without it.
+
+#### Drift Detection
+
+After reading `OPERATIONS.md`, check for staleness:
+
+- Do all files in **Read Order** and **Protected Files** still exist?
+- Are there new high fan-in files (imported by many modules) not yet in Protected Files?
+- Does `test_runner` still execute successfully?
+- Does `build_cmd` still work (if set)?
+- Has `last_analyzed` in Part 1 exceeded 30 days?
+
+If any drift is found, append a **Drift Report** to the Orientation Summary:
+
+```
+## ⚠️ Drift Detected
+- ➕ Suggest add: <file> (reason)
+- ❌ Stale entry: <file> (deleted/moved)
+- 🔄 test_runner: ✅ works | ❌ broken
+- 🔄 build_cmd: ✅ works | ❌ broken
+
+Update OPERATIONS.md with these changes? [y/n]
+```
+
+> **Human must confirm** before OPERATIONS.md is updated. Agent MUST NOT modify Protected Files, Read Order, or other Part 1 fields without approval.
+> If no drift is detected, skip silently — no extra output.
 
 **Rule: 先读后写，不懂不动。**
 
