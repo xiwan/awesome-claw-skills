@@ -7,7 +7,7 @@ description: "AI Development Lifecycle — standardized, version-driven workflow
 
 A standardized, version-driven development workflow for AI agents working on codebases.
 
-> Version: 2.2.0
+> Version: 2.3.0
 
 ## Core Philosophy
 
@@ -162,6 +162,28 @@ Read the project. Understand before you change.
 **Rule: 先读后写，不懂不动。**
 
 ### Phase 1: Design — Version Declaration
+
+#### [Optional] Requirement Grill
+
+When the requirement is ambiguous or the user hasn't specified a version number, run a quick requirements interview before declaring the version. Skip this if the task is already clear.
+
+**Trigger**: user says "grill me", "clarify task", or the requirement feels vague.
+**Skip condition**: requirement is clear and version bump is obvious — proceed directly to step 1 below.
+
+If triggered, ask these questions **one at a time**, give a recommended answer for each:
+
+1. What problem does this task solve? (one sentence)
+2. Patch / minor / major? (recommend based on the answer)
+3. Which files need to change? (list specific paths)
+4. Do any files hit Protected Files? → if yes, STOP and ask human
+5. What's the success criterion? (must be concrete and verifiable)
+6. What are the edge cases or risks?
+7. What is explicitly out of scope?
+
+After all answers, output a draft Phase 1 declaration and ask: "Ready to proceed?"
+Once confirmed, continue with the standard Phase 1 steps below.
+
+---
 
 > **This is where every task begins.** No code without a version.
 
