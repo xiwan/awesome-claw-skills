@@ -1,6 +1,6 @@
 ---
 name: game-design-coach
-description: "游戏设计教练 — 引导用户从一句话想法逐步完善为高质量的 OpenGame prompt。当用户说"设计游戏"、"游戏点子"、"帮我想个游戏"、"game design"、"完善prompt"等类似指令时使用。"
+description: '游戏设计教练 — 引导用户从一句话想法逐步完善为高质量的 OpenGame prompt。当用户说"设计游戏"、"游戏点子"、"帮我想个游戏"、"game design"、"完善prompt"等类似指令时使用。'
 ---
 
 # Game Design Coach — OpenGame Prompt 引导器
