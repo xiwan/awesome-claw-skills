@@ -21,6 +21,7 @@
 | [xiaoyuzhou-monitor](./xiaoyuzhou-monitor/) | 小宇宙播客数据监控 — 播放量、订阅者、评论，Token 自动刷新 |
 | [skill-slimmer](./skill-slimmer/) | SKILL.md 瘦身工具 — 用四问法将臃肿的 SKILL.md 重构为三层架构（必读/按需/示例），最小化 context window 开销 |
 | [game-design-coach](./game-design-coach/) | 游戏设计教练 — 引导用户从一句话想法逐步完善为高质量的 OpenGame prompt |
+| [image-gen](./image-gen/) | AI 图片生成 — 支持豆包 Seedream（火山方舟）和 Pollinations（免费备选），文生图、图生图、组图 |
 
 ## 安装
 
@@ -64,6 +65,7 @@ A collection of useful skills for [Clawdbot](https://github.com/clawdbot/clawdbo
 | [xiaoyuzhou-monitor](./xiaoyuzhou-monitor/) | Xiaoyuzhou podcast monitoring — play counts, subscribers, comments, auto token refresh |
 | [skill-slimmer](./skill-slimmer/) | SKILL.md slimming tool — restructure bloated SKILL.md into lean three-layer architecture (must-read / on-demand / examples) to minimize context window cost |
 | [game-design-coach](./game-design-coach/) | Game design coach — guide users from a one-line idea to a high-quality OpenGame prompt step by step |
+| [image-gen](./image-gen/) | AI image generation — supports Doubao Seedream (Volcengine) and Pollinations (free fallback), text-to-image, image-to-image, sequential generation |
 
 ## Installation
 
