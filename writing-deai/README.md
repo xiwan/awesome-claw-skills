@@ -2,6 +2,8 @@
 
 **一键扫描 AI 写作痕迹，让你的文章不再一眼 GPT。**
 
+![cover](assets/cover.jpg)
+
 ![workflow](assets/workflow.png)
 
 ## 它解决什么问题？
