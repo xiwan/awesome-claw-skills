@@ -6,16 +6,38 @@
 # Requires:
 #   COMFY_INSTANCE_ID   EC2 instance id
 #   COMFY_AWS_REGION    region (default us-east-1)
-# Both may come from <clawd_root>/secrets/comfyui.env
+# Both may come from comfyui.env (auto-discovered by walking up from this
+# script, or set COMFY_ENV_FILE to point at it explicitly).
 #
 # Usage: instance.sh {start|stop|status}
 
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-ENV_FILE="$SCRIPT_DIR/../../../secrets/comfyui.env"
 
-if [[ -f "$ENV_FILE" ]]; then
+# Locate comfyui.env without assuming a fixed install depth.
+#   1. $COMFY_ENV_FILE if set
+#   2. secrets/comfyui.env walking up from this script
+#   3. ~/clawd/secrets, ~/.config/comfyui, ~/.comfyui.env
+find_env_file() {
+    if [[ -n "${COMFY_ENV_FILE:-}" && -f "$COMFY_ENV_FILE" ]]; then
+        echo "$COMFY_ENV_FILE"; return
+    fi
+    local dir="$SCRIPT_DIR"
+    while [[ "$dir" != "/" ]]; do
+        [[ -f "$dir/secrets/comfyui.env" ]] && { echo "$dir/secrets/comfyui.env"; return; }
+        dir="$(dirname "$dir")"
+    done
+    for cand in "$HOME/clawd/secrets/comfyui.env" \
+                "$HOME/.config/comfyui/comfyui.env" \
+                "$HOME/.comfyui.env"; do
+        [[ -f "$cand" ]] && { echo "$cand"; return; }
+    done
+}
+
+ENV_FILE="$(find_env_file)"
+
+if [[ -n "$ENV_FILE" && -f "$ENV_FILE" ]]; then
     # shellcheck disable=SC1090
     set -a; source "$ENV_FILE"; set +a
 fi

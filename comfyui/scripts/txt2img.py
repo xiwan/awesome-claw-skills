@@ -10,7 +10,8 @@ Only uses the Python standard library.
 Configuration is read from (in order of precedence):
   1. Command-line flags
   2. Environment variables
-  3. <clawd_root>/secrets/comfyui.env
+  3. comfyui.env — found by walking up from this script, or in a few
+     common locations (see find_env_file); override with $COMFY_ENV_FILE
 
 Required:
   COMFY_HOST          e.g. http://localhost:8188  or  https://comfy.example.com
@@ -19,7 +20,8 @@ Optional:
   COMFY_API_KEY       Sent as an auth header if your endpoint requires one
   COMFY_AUTH_HEADER   Header name for the key (default: X-Comfy-Key)
   COMFY_OUT           Output directory (default: ~/clawd/output/images)
-  COMFY_INSTANCE_ID   EC2 instance id, enables --wake / friendlier errors
+  COMFY_ENV_FILE      Explicit path to the env file (overrides auto-discovery)
+  COMFY_INSTANCE_ID   EC2 instance id, enables --wake/--stop / friendlier errors
   COMFY_AWS_REGION    AWS region for the above (default: us-east-1)
 
 See references/api.md for the raw HTTP API and how to add your own workflow.
@@ -39,8 +41,35 @@ import urllib.parse
 import urllib.request
 
 SCRIPT_DIR = pathlib.Path(__file__).resolve().parent
-SECRETS_DIR = SCRIPT_DIR / ".." / ".." / ".." / "secrets"
 DEFAULT_OUT = pathlib.Path.home() / "clawd" / "output" / "images"
+
+
+def find_env_file():
+    """Locate comfyui.env without assuming a fixed install depth.
+
+    Search order:
+      1. $COMFY_ENV_FILE, if set (explicit override)
+      2. secrets/comfyui.env walking up from this script's directory
+      3. a few common fallbacks (~/clawd/secrets, ~/.config/comfyui)
+    Returns the first existing path, or None.
+    """
+    override = os.environ.get("COMFY_ENV_FILE")
+    if override:
+        p = pathlib.Path(override).expanduser()
+        return p if p.exists() else None
+
+    for parent in [SCRIPT_DIR, *SCRIPT_DIR.parents]:
+        cand = parent / "secrets" / "comfyui.env"
+        if cand.exists():
+            return cand
+
+    home = pathlib.Path.home()
+    for cand in (home / "clawd" / "secrets" / "comfyui.env",
+                 home / ".config" / "comfyui" / "comfyui.env",
+                 home / ".comfyui.env"):
+        if cand.exists():
+            return cand
+    return None
 
 # ── Workflow presets ────────────────────────────────────────────────
 # Each preset lists the model files it needs and how to build the graph.
@@ -107,9 +136,9 @@ def resolve_preset(name):
 
 # ── Config ──────────────────────────────────────────────────────────
 def load_env_file():
-    """Load secrets/comfyui.env into os.environ without clobbering real env."""
-    env_file = (SECRETS_DIR / "comfyui.env").resolve()
-    if not env_file.exists():
+    """Load comfyui.env into os.environ without clobbering real env."""
+    env_file = find_env_file()
+    if not env_file:
         return
     for line in env_file.read_text().splitlines():
         line = line.strip()
@@ -240,6 +269,22 @@ def wake_instance(client, timeout=300):
         time.sleep(10)
     print()
     die(f"instance did not become ready within {timeout}s")
+
+
+def stop_instance():
+    """Stop the EC2 backend to halt GPU billing. Best-effort, non-fatal."""
+    iid = os.environ.get("COMFY_INSTANCE_ID")
+    if not iid:
+        print("note: --stop needs COMFY_INSTANCE_ID; skipping.")
+        return
+    if not shutil.which("aws"):
+        print("note: --stop needs the AWS CLI on PATH; skipping.")
+        return
+    region = os.environ.get("COMFY_AWS_REGION", "us-east-1")
+    print(f"stopping instance {iid} in {region} (disk & models preserved) ...")
+    subprocess.run(["aws", "ec2", "stop-instances", "--region", region,
+                    "--instance-ids", iid],
+                   check=False, stdout=subprocess.DEVNULL)
 
 
 # ── Graph builders ──────────────────────────────────────────────────
@@ -492,10 +537,12 @@ def main():
                     help="seconds to wait per image (default 900)")
     ap.add_argument("--wake", action="store_true",
                     help="start the EC2 backend first (needs COMFY_INSTANCE_ID)")
+    ap.add_argument("--stop", action="store_true",
+                    help="stop the EC2 backend after generating (saves GPU cost)")
     ap.add_argument("--list-models", action="store_true",
                     help="show models installed on the server, then exit")
     ap.add_argument("--no-open", action="store_true",
-                    help="do not reveal the file in Finder afterwards")
+                    help="do not reveal the file in the file manager afterwards")
     args = ap.parse_args()
 
     host = args.host or os.environ.get("COMFY_HOST")
@@ -555,8 +602,32 @@ def main():
 
     if saved:
         print(f"\n{len(saved)} image(s) in {args.dir}")
-        if not args.no_open and platform.system() == "Darwin":
-            subprocess.run(["open", "-R", str(saved[-1])], check=False)
+        if not args.no_open:
+            reveal(saved[-1])
+
+    if args.stop:
+        stop_instance()
+
+
+def reveal(path):
+    """Best-effort open the file/its folder in the OS file manager.
+
+    Cross-platform and silent on failure — never blocks or errors out
+    just because there's no GUI (e.g. headless servers, CI).
+    """
+    system = platform.system()
+    try:
+        if system == "Darwin":
+            subprocess.run(["open", "-R", str(path)], check=False)
+        elif system == "Windows":
+            subprocess.run(["explorer", "/select,", str(path)], check=False)
+        else:  # Linux / other: open the containing folder if we have a GUI
+            if not (os.environ.get("DISPLAY") or os.environ.get("WAYLAND_DISPLAY")):
+                return  # headless — nothing to open
+            if shutil.which("xdg-open"):
+                subprocess.run(["xdg-open", str(path.parent)], check=False)
+    except Exception:
+        pass
 
 
 if __name__ == "__main__":

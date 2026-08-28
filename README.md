@@ -23,6 +23,8 @@
 | [game-design-coach](./game-design-coach/) | 游戏设计教练 — 引导用户从一句话想法逐步完善为高质量的 OpenGame prompt |
 | [image-gen](./image-gen/) | AI 图片生成 — 支持豆包 Seedream（火山方舟）和 Pollinations（免费备选），文生图、图生图、组图 |
 | [comfyui](./comfyui/) | 自建 ComfyUI 文生图 — 走 HTTP API 不开 Web 界面，自动探测服务端模型，支持 Z-Image Turbo / FLUX.1 / 通用 SD，可一键唤醒 EC2 后端 |
+| [taste-scorer](./taste-scorer/) | 万物品味评分 — 基于 Rubrics+ 从设计、原创性、工艺、功能性四维打分（1-4），支持按品类动态调权 |
+| [writing-deai](./writing-deai/) | 写作去 AI 味自检 — 基于 claudisms 禁词表扫描 AI 味词汇/结构/语气，支持中英文，正式输出前的最后一道防线 |
 
 ## 安装
 
@@ -68,6 +70,8 @@ A collection of useful skills for [Clawdbot](https://github.com/clawdbot/clawdbo
 | [game-design-coach](./game-design-coach/) | Game design coach — guide users from a one-line idea to a high-quality OpenGame prompt step by step |
 | [image-gen](./image-gen/) | AI image generation — supports Doubao Seedream (Volcengine) and Pollinations (free fallback), text-to-image, image-to-image, sequential generation |
 | [comfyui](./comfyui/) | Self-hosted ComfyUI text-to-image — HTTP API only, no web UI. Auto-detects server-side models, supports Z-Image Turbo / FLUX.1 / generic SD, can wake an EC2 backend |
+| [taste-scorer](./taste-scorer/) | Taste scoring for anything — rate across Design, Originality, Craft, and Functionality (1-4) using a Rubrics+ system, with per-category dynamic weighting |
+| [writing-deai](./writing-deai/) | Writing de-AI self-check — scan for AI-flavored words, structures, and tone based on the claudisms banlist. Supports Chinese and English, the last line of defense before publishing |
 
 ## Installation
 

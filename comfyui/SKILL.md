@@ -42,6 +42,9 @@ scripts/txt2img.sh --list-models
 # 后端在 EC2 上且已停机：先唤醒再出图
 scripts/txt2img.sh "a quiet harbour at dawn" --wake
 
+# 出图后自动停机，省 GPU 费用（配合 --wake 就是"用完即走"）
+scripts/txt2img.sh "a quiet harbour at dawn" --wake --stop
+
 # 交互模式
 scripts/txt2img.sh
 ```
@@ -67,6 +70,16 @@ COMFY_OUT=~/clawd/output/images
 ```
 
 也可以直接用环境变量或 `--host` 覆盖。**脚本里不含任何硬编码的密钥或主机名。**
+
+### 配置文件放哪都行
+
+脚本会自动查找 `comfyui.env`，不依赖固定的安装位置，按以下顺序：
+
+1. 环境变量 `COMFY_ENV_FILE` 指定的路径（最高优先级）
+2. 从脚本所在目录**逐级向上**查找 `secrets/comfyui.env`
+3. 常见兜底位置：`~/clawd/secrets/comfyui.env`、`~/.config/comfyui/comfyui.env`、`~/.comfyui.env`
+
+所以无论 skill 装在哪一层目录，或者你想把配置放到 `~/.config` 下，都能被找到。
 
 没有现成后端？见 [references/deploy-aws.md](references/deploy-aws.md)（在 AWS 上从零起一台，含机型选择、显存匹配和成本）。
 
@@ -106,8 +119,9 @@ scripts/txt2img.sh "a fox in snow" --ckpt sd_xl_base_1.0.safetensors --cfg 7 -n 
 | `--host` | — | 覆盖 `COMFY_HOST` |
 | `--timeout` | `900` | 每张图等待上限（秒） |
 | `--wake` | 关 | 先启动 EC2 后端并轮询到就绪 |
+| `--stop` | 关 | 出图后停止 EC2 后端（省 GPU 费用；需 `COMFY_INSTANCE_ID`） |
 | `--list-models` | — | 列出服务端模型后退出 |
-| `--no-open` | 关 | 完成后不在 Finder 中定位 |
+| `--no-open` | 关 | 完成后不用系统文件管理器定位（headless 环境自动跳过） |
 
 分辨率分隔符 `x` `*` `×` `,` 空格都认，范围 256–4096，**自动对齐到 16 的倍数**（扩散模型要求）。
 
