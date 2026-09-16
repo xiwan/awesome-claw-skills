@@ -25,6 +25,7 @@
 | [comfyui](./comfyui/) | 自建 ComfyUI 文生图 — 走 HTTP API 不开 Web 界面，自动探测服务端模型，支持 Z-Image Turbo / FLUX.1 / 通用 SD，可一键唤醒 EC2 后端 |
 | [taste-scorer](./taste-scorer/) | 万物品味评分 — 基于 Rubrics+ 从设计、原创性、工艺、功能性四维打分（1-4），支持按品类动态调权 |
 | [writing-deai](./writing-deai/) | 写作去 AI 味自检 — 基于 claudisms 禁词表扫描 AI 味词汇/结构/语气，支持中英文，正式输出前的最后一道防线 |
+| [yue2-music](./yue2-music/) | YuE2 音乐生成 — 歌词+风格生成整曲，先出可编辑的 ABC 旋律和弦谱再渲染音频；支持零样本翻唱、改和声/换词并机器校验旋律不变量；可驱动远端 GPU 后端 |
 
 ## 安装
 
@@ -68,6 +69,7 @@ A collection of useful skills for [Clawdbot](https://github.com/clawdbot/clawdbo
 | [xiaoyuzhou-monitor](./xiaoyuzhou-monitor/) | Xiaoyuzhou podcast monitoring — play counts, subscribers, comments, auto token refresh |
 | [skill-slimmer](./skill-slimmer/) | SKILL.md slimming tool — restructure bloated SKILL.md into lean three-layer architecture (must-read / on-demand / examples) to minimize context window cost |
 | [game-design-coach](./game-design-coach/) | Game design coach — guide users from a one-line idea to a high-quality OpenGame prompt step by step |
+| [yue2-music](./yue2-music/) | YuE2 music generation — lyrics + style to a full song via an editable ABC melody/chord score; zero-shot covers, reharmonization and lyric changes with machine-checked melody invariants; can drive a remote GPU backend |
 | [image-gen](./image-gen/) | AI image generation — supports Doubao Seedream (Volcengine) and Pollinations (free fallback), text-to-image, image-to-image, sequential generation |
 | [comfyui](./comfyui/) | Self-hosted ComfyUI text-to-image — HTTP API only, no web UI. Auto-detects server-side models, supports Z-Image Turbo / FLUX.1 / generic SD, can wake an EC2 backend |
 | [taste-scorer](./taste-scorer/) | Taste scoring for anything — rate across Design, Originality, Craft, and Functionality (1-4) using a Rubrics+ system, with per-category dynamic weighting |
