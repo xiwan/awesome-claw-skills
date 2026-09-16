@@ -169,6 +169,7 @@ anti-aliased edges, mixed pixel sizes, dirty pixels
 
 | 文件 | 内容 | 何时读取 |
 |------|------|----------|
+| `references/the-last-night-style.md` | The Last Night 2.5D filmic pixel art 风格实现指南 | 提到 The Last Night 风格/2.5D cinematic pixel/Low-fi hi-fi 时 |
 | `references/style-guide-template.md` | 风格圣经文档模板 | 新项目启动时 |
 | `references/animation-specs.md` | 动画帧数/帧率/重量感设计 | 设计角色动画时 |
 | `references/scene-design.md` | 场景色彩规划/视差/光影/Auto-tiling | 设计场景时 |
