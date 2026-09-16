@@ -1,0 +1,8 @@
+# Never commit credentials or generated output.
+secrets/
+*.env
+!*.env.example
+output/
+outputs/
+__pycache__/
+*.pyc
