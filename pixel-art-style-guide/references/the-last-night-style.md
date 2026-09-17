@@ -1,5 +1,9 @@
 # The Last Night 风格指南：2.5D Filmic Pixel Art
 
+> 配套实测数据：`references/the-last-night-visual-analysis.md`
+> （10 张官方参考图的亮度分布/色相占比/高光色实测值 + 可复现的验收脚本）
+> 参考图与验收脚本在 `references/the-last-night/`。
+
 ## 核心理念
 
 **"Low-fi assets, hi-fi rendering"**
@@ -21,7 +25,7 @@
 | **昼夜循环** | 全局光照随时间变化 | 传统固定色调 |
 | **3D 物理物体** | 地面上的箱子等是 3D 物体，受光照和物理引擎影响 | 传统是 2D sprite |
 | **折射效果** | 窗户玻璃、雨滴折射背景图像 | 传统无 |
-| **电影宽银幕比例** | 21:9 或更宽，强化电影感 | 传统 16:9 或 4:3 |
+| **电影宽银幕比例** | 官方素材实测 **2.53:1**（比 21:9 更宽）；仅为取景习惯，非强制 | 传统 16:9 或 4:3 |
 
 ## 场景构成层次
 
@@ -38,6 +42,18 @@
 ```
 
 关键点：**垂直面用 2D billboard sprite，水平面用 3D 几何体**。这样垂直面保持像素质感，水平面能做反射和物理。
+
+## 参考图速览
+
+| | |
+|---|---|
+| ![keyart](the-last-night/01-keyart-hillside-godrays.jpg)<br>**01** 山坡棚屋：红霓虹 + 门内体积光 + 湿地反射 + 青雾景深 | ![street](the-last-night/02-street-hovercar-wet-reflection.jpg)<br>**02** 街道悬浮车：下 1/3 失焦水面 bokeh |
+| ![hovercar](the-last-night/03-hovercar-orange-neon-street.jpg)<br>**03** 单一暖光源主导整帧 | ![shopfront](the-last-night/04-shopfront-vines-steam.jpg)<br>**04** 藤蔓压科技 + 蒸汽 + 前景剪影挡边 |
+| ![store](the-last-night/05-general-store-crowd-teal.jpg)<br>**05** 招牌绿作第二色，人群三层纵深 | ![crowd](the-last-night/06-crowd-backlit-billboard-blue.jpg)<br>**06** 雾抬黑场：全图无纯黑 |
+| ![vertical](the-last-night/07-vertical-amber-crowd-dof.jpg)<br>**07** 极端前景虚化 | ![harbor](the-last-night/08-harbor-seafolks-green-fog.jpg)<br>**08** 雾主导，饱和度最低 |
+| ![crowd anim](the-last-night/anim-01-crowd-street-loop.gif)<br>**anim-01** 街头人群（摄像机持续运动） | ![shootout anim](the-last-night/anim-02-shootout-interior-red.gif)<br>**anim-02** 室内枪战（98% 单色相） |
+
+每张图的实测亮度/色相/高光数值见 `the-last-night-visual-analysis.md`。
 
 ## 灵感来源
 
@@ -61,6 +77,10 @@ Tim Soret 明确提到的参考：
 | 白天街道 | 灰蓝 #8A9AB0 | 浅米 #D8D0C0 | 绿植 #4A8040 | 日常、后赛博朋克 |
 
 特征：**高对比度 + 极低环境光 + 点状强光源（霓虹/路灯/屏幕）**。暗部极暗，亮部极亮。
+
+> 上表是按场景类型归纳的设计用色。参考图里**实测**出来的高光色更窄（钠灯橙 `#C06020`–`#E0A040`、
+> 霓虹青 `#00A0C0`–`#4080C0`、灯笼红 `#C02020`–`#E04040`、招牌绿 `#80C080`–`#A0E080`），
+> 且没有一个到达纯白 —— 见 `the-last-night-visual-analysis.md` 第 3 条。
 
 ## AI 辅助实现指南
 
