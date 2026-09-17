@@ -26,7 +26,7 @@
 | [taste-scorer](./taste-scorer/) | 万物品味评分 — 基于 Rubrics+ 从设计、原创性、工艺、功能性四维打分（1-4），支持按品类动态调权 |
 | [writing-deai](./writing-deai/) | 写作去 AI 味自检 — 基于 claudisms 禁词表扫描 AI 味词汇/结构/语气，支持中英文，正式输出前的最后一道防线 |
 | [yue2-music](./yue2-music/) | YuE2 音乐生成 — 歌词+风格生成整曲，先出可编辑的 ABC 旋律和弦谱再渲染音频；支持零样本翻唱、改和声/换词并机器校验旋律不变量；可驱动远端 GPU 后端 |
-| [pixel-art-style-guide](./pixel-art-style-guide/) | 像素游戏美术风格方法论 — 定义风格圣经（分辨率/调色板/光照）、角色/场景/UI/特效设计规范、AI 辅助美术后处理流程、外包验收清单 |
+| [pixel-art-style-guide](./pixel-art-style-guide/) | 像素游戏美术风格方法论 — 定义风格圣经（分辨率/调色板/光照）、角色/场景/UI/特效设计规范、AI 辅助美术后处理流程、外包验收清单；含 The Last Night 2.5D 电影感风格的参考图实测数据与量化验收脚本 |
 
 ## 安装
 
@@ -75,7 +75,7 @@ A collection of useful skills for [Clawdbot](https://github.com/clawdbot/clawdbo
 | [comfyui](./comfyui/) | Self-hosted ComfyUI text-to-image — HTTP API only, no web UI. Auto-detects server-side models, supports Z-Image Turbo / FLUX.1 / generic SD, can wake an EC2 backend |
 | [taste-scorer](./taste-scorer/) | Taste scoring for anything — rate across Design, Originality, Craft, and Functionality (1-4) using a Rubrics+ system, with per-category dynamic weighting |
 | [writing-deai](./writing-deai/) | Writing de-AI self-check — scan for AI-flavored words, structures, and tone based on the claudisms banlist. Supports Chinese and English, the last line of defense before publishing |
-| [pixel-art-style-guide](./pixel-art-style-guide/) | Pixel art style guide & methodology — define a style bible (resolution, palette, lighting), design specs for characters/scenes/UI/VFX, AI-assisted art post-processing pipeline, outsource QA checklist |
+| [pixel-art-style-guide](./pixel-art-style-guide/) | Pixel art style guide & methodology — define a style bible (resolution, palette, lighting), design specs for characters/scenes/UI/VFX, AI-assisted art post-processing pipeline, outsource QA checklist; includes measured reference data and a quantitative QA script for The Last Night's 2.5D filmic style |
 
 ## Installation
 

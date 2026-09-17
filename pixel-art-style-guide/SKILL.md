@@ -5,7 +5,8 @@ description: >
   (2) 指导 AI 生成像素美术素材时的 prompt 约束和后处理流程，
   (3) 角色/场景/UI/特效的设计规范和验收标准，
   (4) 外包美术素材的风格统一验收。
-  触发词：像素美术、pixel art、游戏美术风格、美术规范、style guide、调色板、tilemap、sprite、角色动画。
+  触发词：像素美术、pixel art、游戏美术风格、美术规范、style guide、调色板、tilemap、sprite、角色动画、
+  The Last Night、2.5D 电影感像素、filmic pixel art。
 ---
 
 # 像素游戏美术风格方法论
@@ -170,6 +171,8 @@ anti-aliased edges, mixed pixel sizes, dirty pixels
 | 文件 | 内容 | 何时读取 |
 |------|------|----------|
 | `references/the-last-night-style.md` | The Last Night 2.5D filmic pixel art 风格实现指南 | 提到 The Last Night 风格/2.5D cinematic pixel/Low-fi hi-fi 时 |
+| `references/the-last-night-visual-analysis.md` | 官方参考图实测数据（亮度分布/色相占比/高光色）+ 量化验收标准 | 需要把 The Last Night 风格落成可验收数值、或验收自己的渲染画面时 |
+| `references/the-last-night/` | 10 张参考图 + `analyze.py` 零依赖分析脚本 | 需要看图对标、或跑脚本量化验收时 |
 | `references/style-guide-template.md` | 风格圣经文档模板 | 新项目启动时 |
 | `references/animation-specs.md` | 动画帧数/帧率/重量感设计 | 设计角色动画时 |
 | `references/scene-design.md` | 场景色彩规划/视差/光影/Auto-tiling | 设计场景时 |
