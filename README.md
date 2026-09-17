@@ -21,6 +21,7 @@
 | [xiaoyuzhou-monitor](./xiaoyuzhou-monitor/) | 小宇宙播客数据监控 — 播放量、订阅者、评论，Token 自动刷新 |
 | [skill-slimmer](./skill-slimmer/) | SKILL.md 瘦身工具 — 用四问法将臃肿的 SKILL.md 重构为三层架构（必读/按需/示例），最小化 context window 开销 |
 | [game-design-coach](./game-design-coach/) | 游戏设计教练 — 引导用户从一句话想法逐步完善为高质量的 OpenGame prompt |
+| [game-script](./game-script/) | 游戏剧本创作 — 主题→故事→角色定位→世界→结构→选项→台词的完整流程，产出程序美术可直接执行的开发向剧本，附零依赖剧本体检脚本（10 条规则） |
 | [image-gen](./image-gen/) | AI 图片生成 — 支持豆包 Seedream（火山方舟）和 Pollinations（免费备选），文生图、图生图、组图 |
 | [comfyui](./comfyui/) | 自建 ComfyUI 文生图 — 走 HTTP API 不开 Web 界面，自动探测服务端模型，支持 Z-Image Turbo / FLUX.1 / 通用 SD，可一键唤醒 EC2 后端 |
 | [taste-scorer](./taste-scorer/) | 万物品味评分 — 基于 Rubrics+ 从设计、原创性、工艺、功能性四维打分（1-4），支持按品类动态调权 |
@@ -70,6 +71,7 @@ A collection of useful skills for [Clawdbot](https://github.com/clawdbot/clawdbo
 | [xiaoyuzhou-monitor](./xiaoyuzhou-monitor/) | Xiaoyuzhou podcast monitoring — play counts, subscribers, comments, auto token refresh |
 | [skill-slimmer](./skill-slimmer/) | SKILL.md slimming tool — restructure bloated SKILL.md into lean three-layer architecture (must-read / on-demand / examples) to minimize context window cost |
 | [game-design-coach](./game-design-coach/) | Game design coach — guide users from a one-line idea to a high-quality OpenGame prompt step by step |
+| [game-script](./game-script/) | Game script writing — full pipeline from theme to story, character roles, world, structure, choices and dialogue; outputs dev-ready scripts and ships a zero-dependency script linter (10 rules) |
 | [yue2-music](./yue2-music/) | YuE2 music generation — lyrics + style to a full song via an editable ABC melody/chord score; zero-shot covers, reharmonization and lyric changes with machine-checked melody invariants; can drive a remote GPU backend |
 | [image-gen](./image-gen/) | AI image generation — supports Doubao Seedream (Volcengine) and Pollinations (free fallback), text-to-image, image-to-image, sequential generation |
 | [comfyui](./comfyui/) | Self-hosted ComfyUI text-to-image — HTTP API only, no web UI. Auto-detects server-side models, supports Z-Image Turbo / FLUX.1 / generic SD, can wake an EC2 backend |
