@@ -2,7 +2,7 @@
 """The Last Night 风格量化分析 / 验收脚本。
 
 零第三方依赖（纯标准库），只读 24/32-bit 未压缩 BMP。
-先把截图转成 BMP（务必等比缩放，否则画幅比判定失效）：
+先把截图转成 BMP（建议等比缩放，画幅比输出才有意义）：
     macOS:  sips -s format bmp --resampleWidth 300 shot.png --out /tmp/shot.bmp
     其他:   ffmpeg -i shot.png -vf scale=300:-1 -pix_fmt bgr24 /tmp/shot.bmp
 
@@ -92,7 +92,7 @@ def analyze(path):
             second = max(second, band_share(start))
 
     print(f"\n=== {os.path.basename(path)}  {width}x{height} ===")
-    print(f"  画幅比        {aspect:.2f} : 1")
+    print(f"  画幅比        {aspect:.2f} : 1  （仅参考，不参与判定）")
     print(f"  近黑 <{DARK_T}    {dark:.0%}")
     print(f"  中间调        {mid:.0%}")
     print(f"  亮部 >={BRIGHT_T}   {bright:.0%}")
@@ -106,8 +106,8 @@ def analyze(path):
         f"{k}deg:{v * 100 // sat_px}%" for k, v in ranked[:5]))
 
     fog_mode = dark < 0.05
+    # 画幅比只作参考输出，不参与判定（截图/裁图/项目自身画幅都会不同）
     checks = [
-        ("画幅比 2.4-2.6", 2.4 <= aspect <= 2.6),
         ("过曝 <5%", hot < 0.05),
         ("主导色相 >=45%", dominant >= 0.45),
         ("次色相 <=20%", second <= 0.20),
